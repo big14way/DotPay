@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+pragma solidity ^0.8.26;
 
 address constant XCM_PRECOMPILE = 0x00000000000000000000000000000000000a0000;
 

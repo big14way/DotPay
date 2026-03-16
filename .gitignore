@@ -23,3 +23,5 @@ contracts/typechain-types/
 *.swp
 *.swo
 .DS_Store
+contracts/artifacts-pvm/
+contracts/cache-pvm/

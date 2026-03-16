@@ -7,8 +7,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
 const passetHubConfig = {
   polkavm: true,
-  url: "https://testnet-passet-hub-eth-rpc.polkadot.io",
-  chainId: 420420422,
+  url: "https://eth-rpc-testnet.polkadot.io/",
+  chainId: 420420417,
   gas: "auto",
   gasPrice: "auto",
   timeout: 120000
@@ -20,7 +20,7 @@ if (PRIVATE_KEY && PRIVATE_KEY.replace(/^0x/, "").length === 64) {
 
 module.exports = {
   solidity: {
-    version: "0.8.28",
+    version: "0.8.26",
     settings: {
       optimizer: { enabled: true, runs: 200 },
       evmVersion: "cancun",

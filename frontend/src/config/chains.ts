@@ -1,7 +1,7 @@
 import { defineChain } from "viem";
 
 export const passetHub = defineChain({
-  id: 420420422,
+  id: 420420417,
   name: "Paseo Asset Hub",
   nativeCurrency: {
     name: "PAS",
@@ -10,22 +10,22 @@ export const passetHub = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ["https://testnet-passet-hub-eth-rpc.polkadot.io"],
+      http: ["https://eth-rpc-testnet.polkadot.io"],
     },
   },
   blockExplorers: {
     default: {
       name: "Blockscout",
-      url: "https://blockscout-passet-hub.parity-testnet.parity.io",
+      url: "https://blockscout-testnet.polkadot.io",
     },
   },
   testnet: true,
 });
 
 export const NETWORK_CONSTANTS = {
-  CHAIN_ID: 420420422,
-  EVM_RPC: "https://testnet-passet-hub-eth-rpc.polkadot.io",
-  EXPLORER: "https://blockscout-passet-hub.parity-testnet.parity.io",
+  CHAIN_ID: 420420417,
+  EVM_RPC: "https://eth-rpc-testnet.polkadot.io",
+  EXPLORER: "https://blockscout-testnet.polkadot.io",
   NATIVE_TOKEN: "PAS",
   NATIVE_DECIMALS: 10,
   FAUCET: "https://faucet.polkadot.io/?parachain=1111",

@@ -17,6 +17,7 @@
     "hardhat": "^2.22.0",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-gas-reporter": "^1.0.9",
+    "solc": "0.8.26",
     "solidity-coverage": "^0.8.12"
   },
   "dependencies": {
