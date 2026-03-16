@@ -831,7 +831,7 @@ describe("DotPay", function () {
     it("only core can initiate settlement", async function () {
       const { fiatSettlement, buyer } = await loadFixture(deployFixture);
       const stellarAddr = ethers.toUtf8Bytes(
-        "GABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUV"
+        "GABCDEFGHIJKLMNOPQRSTUVWXYZ234567ABCDEFGHIJKLMNOPQRSTUVW"
       );
       await expect(
         fiatSettlement
