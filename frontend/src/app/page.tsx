@@ -11,6 +11,8 @@ import {
   Wallet,
   TrendingUp,
   FileText,
+  Droplets,
+  CheckCircle,
 } from "lucide-react";
 import { StatsCard } from "@/components/StatsCard";
 import { EscrowCard } from "@/components/EscrowCard";
@@ -18,6 +20,7 @@ import { useEscrows } from "@/hooks/useEscrows";
 import { useUSDCBalance } from "@/hooks/useBalance";
 import { useCompliance } from "@/hooks/useCompliance";
 import { useVaultStats } from "@/hooks/useYield";
+import { useFaucet, useSetKyc } from "@/hooks/useFaucet";
 import { formatUSDC } from "@/lib/utils";
 
 export default function Dashboard() {
@@ -78,11 +81,19 @@ export default function Dashboard() {
     );
   }
 
+  const { mintUSDC, isPending: isMinting, isConfirming: isMintConfirming } = useFaucet();
+  const { setKyc, isPending: isSettingKyc, isConfirming: isKycConfirming } = useSetKyc();
+  const { kycLevel } = useCompliance();
+
   const activeEscrows = myEscrows.filter((e) => e.status === 0);
   const totalVolume = myEscrows.reduce(
     (sum, e) => sum + Number(e.amount),
     0
   );
+
+  const needsUSDC = !balance || balance === 0n;
+  const needsKyc = kycLevel === 0;
+  const showSetup = needsUSDC || needsKyc;
 
   return (
     <main className="min-h-screen pt-20">
@@ -126,6 +137,65 @@ export default function Dashboard() {
             icon={<Shield className="w-5 h-5" />}
           />
         </div>
+
+        {showSetup && (
+          <div className="bg-surface border border-[var(--dot-primary)]/30 rounded-xl p-6 mb-8">
+            <h2 className="text-lg font-bold text-white mb-1">Testnet Setup</h2>
+            <p className="text-sm text-[var(--dot-muted)] mb-4">
+              Get test tokens and set up your account to start using DotPay
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              {needsUSDC && (
+                <button
+                  onClick={() => mintUSDC()}
+                  disabled={isMinting || isMintConfirming}
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-dot-gradient text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isMinting ? (
+                    "Confirm in Wallet..."
+                  ) : isMintConfirming ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Minting...
+                    </>
+                  ) : (
+                    <>
+                      <Droplets className="w-4 h-4" /> Get 10,000 Test USDC
+                    </>
+                  )}
+                </button>
+              )}
+              {needsKyc && address && (
+                <button
+                  onClick={() => setKyc(address, 2)}
+                  disabled={isSettingKyc || isKycConfirming}
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--dot-primary)] text-[var(--dot-primary)] font-semibold text-sm hover:bg-[var(--dot-primary)]/10 transition-colors disabled:opacity-50"
+                >
+                  {isSettingKyc ? (
+                    "Confirm in Wallet..."
+                  ) : isKycConfirming ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-[var(--dot-primary)] border-t-transparent rounded-full animate-spin" />
+                      Setting KYC...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="w-4 h-4" /> Set KYC (Required)
+                    </>
+                  )}
+                </button>
+              )}
+              <a
+                href="https://faucet.polkadot.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-dot text-[var(--dot-muted)] font-semibold text-sm hover:text-white hover:border-white/20 transition-colors"
+              >
+                <Wallet className="w-4 h-4" /> Get PAS (Gas)
+              </a>
+            </div>
+          </div>
+        )}
 
         <div>
           <div className="flex items-center justify-between mb-4">

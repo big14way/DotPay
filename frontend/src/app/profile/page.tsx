@@ -16,14 +16,18 @@ import {
   AlertTriangle,
   CheckCircle,
   User,
+  Droplets,
 } from "lucide-react";
+import { useFaucet, useSetKyc } from "@/hooks/useFaucet";
 
 export default function ProfilePage() {
   const { address, isConnected } = useAccount();
-  const { kycLevel, kycLabel, isBlacklisted, txLimit } = useCompliance();
-  const { balance: usdcBalance } = useUSDCBalance();
+  const { kycLevel, kycLabel, isBlacklisted, txLimit, refetchKyc } = useCompliance();
+  const { balance: usdcBalance, refetch: refetchUsdc } = useUSDCBalance();
   const { formatted: nativeBalance, symbol } = useNativeBalance();
   const { myEscrows } = useEscrows();
+  const { mintUSDC, isPending: isMinting, isConfirming: isMintConfirming } = useFaucet();
+  const { setKyc, isPending: isSettingKyc, isConfirming: isKycConfirming } = useSetKyc();
 
   if (!isConnected) {
     return (
@@ -106,6 +110,41 @@ export default function ProfilePage() {
                 {nativeBalance ? `${Number(nativeBalance).toFixed(4)} ${symbol}` : "0 PAS"}
               </p>
             </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3 mt-4">
+            <button
+              onClick={async () => { await mintUSDC(); setTimeout(() => refetchUsdc(), 5000); }}
+              disabled={isMinting || isMintConfirming}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-dot-gradient text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {isMinting ? "Confirm in Wallet..." : isMintConfirming ? (
+                <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Minting...</>
+              ) : (
+                <><Droplets className="w-4 h-4" /> Get 10,000 Test USDC</>
+              )}
+            </button>
+            {kycLevel === 0 && address && (
+              <button
+                onClick={async () => { await setKyc(address, 2); setTimeout(() => refetchKyc(), 5000); }}
+                disabled={isSettingKyc || isKycConfirming}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--dot-primary)] text-[var(--dot-primary)] font-semibold text-sm hover:bg-[var(--dot-primary)]/10 transition-colors disabled:opacity-50"
+              >
+                {isSettingKyc ? "Confirm in Wallet..." : isKycConfirming ? (
+                  <><div className="w-3.5 h-3.5 border-2 border-[var(--dot-primary)] border-t-transparent rounded-full animate-spin" /> Setting KYC...</>
+                ) : (
+                  <><Shield className="w-4 h-4" /> Set KYC Level</>
+                )}
+              </button>
+            )}
+            <a
+              href="https://faucet.polkadot.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dot text-[var(--dot-muted)] text-sm hover:text-white hover:border-white/20 transition-colors"
+            >
+              <Wallet className="w-4 h-4" /> Get PAS (Gas)
+            </a>
           </div>
         </div>
 

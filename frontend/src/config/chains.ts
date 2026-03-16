@@ -4,7 +4,7 @@ export const paseoAssetHub = defineChain({
   id: 420420417,
   name: "Polkadot Hub Testnet",
   nativeCurrency: {
-    decimals: 10,
+    decimals: 18,
     name: "Paseo",
     symbol: "PAS",
   },
