@@ -23,6 +23,7 @@ module.exports = {
     version: "0.8.28",
     settings: {
       optimizer: { enabled: true, runs: 200 },
+      evmVersion: "cancun",
       viaIR: false
     }
   },
@@ -43,6 +44,13 @@ module.exports = {
   gasReporter: {
     enabled: process.env.REPORT_GAS === "true",
     currency: "USD"
+  },
+
+  paths: {
+    sources: "./src",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
   },
 
   contractSizer: {
