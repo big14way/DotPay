@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dotpay-primary: #E6007A;
+  --dotpay-secondary: #6D3AEE;
+  --dotpay-dark: #1A1A2E;
+  --dotpay-darker: #0F0F1A;
+  --dotpay-accent: #00D4AA;
+}
+
+body {
+  background-color: var(--dotpay-darker);
+  color: #ffffff;
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-dotpay-gradient;
+  }
+}

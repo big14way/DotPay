@@ -1,0 +1,26 @@
+{
+  "name": "dotpay-contracts",
+  "version": "1.0.0",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "deploy:paseo": "hardhat ignition deploy ./ignition/modules/DotPay.js --network passetHub",
+    "verify": "hardhat verify --network passetHub",
+    "coverage": "hardhat coverage",
+    "size": "hardhat size-contracts"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@parity/hardhat-polkadot": "^0.1.9",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.0",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.12"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "dockerode": "^4.0.9"
+  }
+}
