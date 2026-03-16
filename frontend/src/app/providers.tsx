@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
@@ -10,6 +10,11 @@ import { Navbar } from "@/components/Navbar";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <WagmiProvider config={config}>
@@ -23,7 +28,7 @@ export function Providers({ children }: { children: ReactNode }) {
           })}
         >
           <Navbar />
-          <main className="pt-16">{children}</main>
+          <main className="pt-16">{mounted ? children : null}</main>
           <Toaster
             position="bottom-right"
             toastOptions={{
