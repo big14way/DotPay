@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
-import { INVOICE_CORE_ABI } from "@/config/abis";
+import { ESCROW_CORE_ABI } from "@/config/abis";
 import { parseUSDC } from "@/lib/utils";
 import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 import { toHex } from "viem";
@@ -42,8 +42,8 @@ export function useCreateEscrow() {
       const descBytes = toHex(description.slice(0, 32).padEnd(32, "\0"), { size: 32 });
 
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.EscrowCore,
+        abi: ESCROW_CORE_ABI,
         functionName: "createEscrow",
         args: [
           seller,

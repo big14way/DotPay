@@ -22,7 +22,7 @@ module.exports = {
   solidity: {
     version: "0.8.26",
     settings: {
-      optimizer: { enabled: true, runs: 200 },
+      optimizer: { enabled: true, runs: 50 },
       evmVersion: "cancun",
       viaIR: false
     }
@@ -32,7 +32,7 @@ module.exports = {
     version: "0.3.0",
     compilerSource: "npm",
     settings: {
-      optimizer: { enabled: true, runs: 200 }
+      optimizer: { enabled: true, runs: 50 }
     }
   },
 

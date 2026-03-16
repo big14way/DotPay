@@ -22,7 +22,7 @@ export default function MarketPage() {
   const approvalAmount = currentListing?.listPrice ?? 0n;
 
   const { needsApproval, approve, isApproving } = useTokenApproval(
-    CONTRACTS.InvoiceCore,
+    CONTRACTS.InvoiceMarket,
     approvalAmount
   );
 

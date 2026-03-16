@@ -8,14 +8,14 @@ import {
   useWaitForTransactionReceipt,
 } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
-import { INVOICE_CORE_ABI } from "@/config/abis";
+import { INVOICE_MARKET_ABI } from "@/config/abis";
 import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 import type { ListingData } from "@/components/InvoiceCard";
 
 export function useMarket() {
   const { data: nextListingId } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.InvoiceMarket,
+    abi: INVOICE_MARKET_ABI,
     functionName: "nextListingId",
   });
 
@@ -24,8 +24,8 @@ export function useMarket() {
   const listingCalls = useMemo(() => {
     if (listingCount === 0) return [];
     return Array.from({ length: listingCount }, (_, i) => ({
-      address: CONTRACTS.InvoiceCore as `0x${string}`,
-      abi: INVOICE_CORE_ABI,
+      address: CONTRACTS.InvoiceMarket as `0x${string}`,
+      abi: INVOICE_MARKET_ABI,
       functionName: "getListing" as const,
       args: [BigInt(i)] as const,
     }));
@@ -74,8 +74,8 @@ export function useBuyInvoice() {
   const buyInvoice = async (listingId: bigint) => {
     try {
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.InvoiceMarket,
+        abi: INVOICE_MARKET_ABI,
         functionName: "buyInvoice",
         args: [listingId],
       });
@@ -106,8 +106,8 @@ export function useListInvoice() {
   const listInvoice = async (escrowId: bigint, listPrice: bigint) => {
     try {
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.InvoiceMarket,
+        abi: INVOICE_MARKET_ABI,
         functionName: "listInvoice",
         args: [escrowId, listPrice],
       });

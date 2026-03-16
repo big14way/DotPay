@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
-import { INVOICE_CORE_ABI } from "@/config/abis";
+import { ESCROW_CORE_ABI } from "@/config/abis";
 import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 
 export function useReleaseEscrow() {
@@ -23,8 +23,8 @@ export function useReleaseEscrow() {
     try {
       setActionLabel("Release");
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.EscrowCore,
+        abi: ESCROW_CORE_ABI,
         functionName: "releaseEscrow",
         args: [escrowId],
       });
@@ -41,8 +41,8 @@ export function useReleaseEscrow() {
     try {
       setActionLabel("Refund");
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.EscrowCore,
+        abi: ESCROW_CORE_ABI,
         functionName: "refundEscrow",
         args: [escrowId],
       });
@@ -59,8 +59,8 @@ export function useReleaseEscrow() {
     try {
       setActionLabel("Dispute");
       const hash = await writeContractAsync({
-        address: CONTRACTS.InvoiceCore,
-        abi: INVOICE_CORE_ABI,
+        address: CONTRACTS.EscrowCore,
+        abi: ESCROW_CORE_ABI,
         functionName: "disputeEscrow",
         args: [escrowId],
       });

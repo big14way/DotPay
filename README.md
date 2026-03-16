@@ -21,11 +21,11 @@ DotPay eliminates these pain points by replacing the entire correspondent bankin
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Polkadot Hub (Paseo Testnet)                      │
 │                       Chain ID: 420420417                            │
-│  ┌───────────────────────────────────────────────────────────────┐  │
-│  │                     InvoiceCore.sol                            │  │
-│  │  createEscrow │ releaseEscrow │ refundEscrow │ disputeEscrow  │  │
-│  │  listInvoice  │ buyInvoice    │ borrowAgainstEscrow           │  │
-│  │  repayBorrow  │ setFiatDetails │ previewYield                 │  │
+│  ┌──────────────────────────────────┐ ┌────────────────────────────┐│
+│  │          EscrowCore.sol          │ │    InvoiceMarket.sol       ││
+│  │  createEscrow │ releaseEscrow    │ │  listInvoice │ buyInvoice  ││
+│  │  refundEscrow │ disputeEscrow    │ │  borrowAgainstEscrow       ││
+│  │  setFiatDetails │ previewYield   │ │  repayBorrow │ getListing  ││
 │  └──────┬──────────────┬──────────────┬─────────────┬────────────┘  │
 │         │              │              │             │                │
 │  ┌──────▼──────┐ ┌─────▼──────┐ ┌────▼─────┐ ┌────▼──────────┐    │
@@ -86,7 +86,8 @@ DotPay eliminates these pain points by replacing the entire correspondent bankin
 
 | Contract | Address |
 |----------|---------|
-| **InvoiceCore** | `0xe3D37E5c036CC0bb4E0A170D49cc9212ABc8f985` |
+| **EscrowCore** | `0x4d88c574A9D573a5C62C692e4714F61829d7E4a6` |
+| **InvoiceMarket** | `0x6997d539bC80f514e7B015545E22f3Db5672a5f8` |
 | **InvoiceNFT** | `0x8486E62b5975A4241818b564834A5f51ae2540B6` |
 | **MockUSDC** | `0xC3a201c2Dc904ae32a9a0adea3478EB252d5Cf88` |
 | **ComplianceOracle** | `0xde5eCbdf2e9601C4B4a08899EAa836081011F7ac` |
@@ -294,7 +295,8 @@ DotPay/
 │   ├── src/
 │   │   ├── interfaces/          # IDotPay.sol, IComplianceOracle.sol, IERC20Minimal.sol
 │   │   ├── mocks/               # MockUSDC.sol (6 decimals)
-│   │   ├── InvoiceCore.sol      # Main protocol contract (escrow, market, lending)
+│   │   ├── EscrowCore.sol       # Core escrow lifecycle (create, release, refund)
+│   │   ├── InvoiceMarket.sol    # Invoice marketplace & borrowing
 │   │   ├── InvoiceNFT.sol       # ERC-721 for tokenized invoices
 │   │   ├── ComplianceOracle.sol # KYC/AML oracle with tiered limits
 │   │   ├── XCMYieldVault.sol    # Hydration yield routing via XCM
@@ -317,21 +319,29 @@ DotPay/
 
 ## Smart Contract Details
 
-### InvoiceCore.sol — The Heart of DotPay
+### EscrowCore.sol — The Heart of DotPay
 
-The main contract orchestrates the entire protocol in a single deployment:
+Manages the full escrow lifecycle, yield routing, and fiat settlement:
 
 | Function | Description |
 |----------|-------------|
 | `createEscrow()` | Lock USDC with seller address, deadline, yield toggle, settlement rail |
 | `releaseEscrow()` | Buyer confirms delivery, funds + yield flow to seller |
-| `refundEscrow()` | Seller returns funds to buyer (before deadline) |
+| `refundEscrow()` | Buyer reclaims funds (before deadline) |
 | `disputeEscrow()` | Either party flags a dispute for resolution |
-| `listInvoice()` | Seller lists invoice NFT on marketplace at a price |
-| `buyInvoice()` | Investor purchases invoice NFT at discount |
+| `setFiatDetails()` | Set Stellar address and corridor for fiat settlement |
+| `previewYield()` | Preview accrued yield for an escrow |
+
+### InvoiceMarket.sol — Invoice Factoring & Borrowing
+
+Handles the secondary market for invoice NFTs and borrowing against escrow:
+
+| Function | Description |
+|----------|-------------|
+| `listInvoice()` | Seller lists invoice NFT on marketplace at a discount |
+| `buyInvoice()` | Investor purchases invoice NFT, becomes release beneficiary |
 | `borrowAgainstEscrow()` | Seller borrows up to 80% LTV against active escrow |
 | `repayBorrow()` | Repay outstanding debt before release |
-| `setFiatDetails()` | Set Stellar address and corridor for fiat settlement |
 
 **Key Constants:**
 - Platform Fee: 0.5% (50 BPS)

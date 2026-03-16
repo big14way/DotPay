@@ -2,7 +2,7 @@
 
 import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
-import { INVOICE_CORE_ABI } from "@/config/abis";
+import { ESCROW_CORE_ABI } from "@/config/abis";
 import { useMemo } from "react";
 import type { EscrowData } from "@/components/EscrowCard";
 
@@ -10,8 +10,8 @@ export function useEscrows() {
   const { address } = useAccount();
 
   const { data: nextId, refetch: refetchNextId } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.EscrowCore,
+    abi: ESCROW_CORE_ABI,
     functionName: "nextEscrowId",
   });
 
@@ -20,8 +20,8 @@ export function useEscrows() {
   const escrowCalls = useMemo(() => {
     if (escrowCount === 0) return [];
     return Array.from({ length: escrowCount }, (_, i) => ({
-      address: CONTRACTS.InvoiceCore as `0x${string}`,
-      abi: INVOICE_CORE_ABI,
+      address: CONTRACTS.EscrowCore as `0x${string}`,
+      abi: ESCROW_CORE_ABI,
       functionName: "getEscrow" as const,
       args: [BigInt(i)] as const,
     }));
@@ -75,8 +75,8 @@ export function useEscrows() {
 
 export function useEscrow(id: bigint) {
   const { data, isLoading, refetch } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.EscrowCore,
+    abi: ESCROW_CORE_ABI,
     functionName: "getEscrow",
     args: [id],
   });

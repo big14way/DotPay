@@ -2,28 +2,28 @@
 
 import { useReadContract } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
-import { INVOICE_CORE_ABI, YIELD_VAULT_ABI } from "@/config/abis";
+import { ESCROW_CORE_ABI, YIELD_VAULT_ABI } from "@/config/abis";
 
 export function useYield(escrowId?: bigint) {
   const { data: previewYield, refetch: refetchYield } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.EscrowCore,
+    abi: ESCROW_CORE_ABI,
     functionName: "previewYield",
     args: escrowId !== undefined ? [escrowId] : undefined,
     query: { enabled: escrowId !== undefined },
   });
 
   const { data: borrowLimit } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.EscrowCore,
+    abi: ESCROW_CORE_ABI,
     functionName: "getBorrowLimit",
     args: escrowId !== undefined ? [escrowId] : undefined,
     query: { enabled: escrowId !== undefined },
   });
 
   const { data: debt } = useReadContract({
-    address: CONTRACTS.InvoiceCore,
-    abi: INVOICE_CORE_ABI,
+    address: CONTRACTS.EscrowCore,
+    abi: ESCROW_CORE_ABI,
     functionName: "getDebt",
     args: escrowId !== undefined ? [escrowId] : undefined,
     query: { enabled: escrowId !== undefined },

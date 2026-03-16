@@ -24,7 +24,7 @@ export default function SendPage() {
   const parsedAmount = amount ? parseUSDC(amount) : 0n;
   const { balance } = useUSDCBalance();
   const { needsApproval, approve, isApproving } = useTokenApproval(
-    CONTRACTS.InvoiceCore,
+    CONTRACTS.EscrowCore,
     parsedAmount
   );
   const { createEscrow, isPending, isConfirming, isSuccess, txHash } =
