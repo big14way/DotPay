@@ -3,20 +3,45 @@
 @tailwind utilities;
 
 :root {
-  --dotpay-primary: #E6007A;
-  --dotpay-secondary: #6D3AEE;
-  --dotpay-dark: #1A1A2E;
-  --dotpay-darker: #0F0F1A;
-  --dotpay-accent: #00D4AA;
+  --dot-bg:        #0A0A0F;
+  --dot-surface:   #13131A;
+  --dot-border:    #1E1E2E;
+  --dot-primary:   #E6007A;
+  --dot-secondary: #552BBF;
+  --dot-success:   #00D395;
+  --dot-warning:   #F59E0B;
+  --dot-text:      #FAFAFA;
+  --dot-muted:     #6B7280;
 }
 
 body {
-  background-color: var(--dotpay-darker);
-  color: #ffffff;
+  background-color: var(--dot-bg);
+  color: var(--dot-text);
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-dotpay-gradient;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, var(--dot-primary), var(--dot-secondary));
   }
+  .bg-dot-gradient {
+    background-image: linear-gradient(135deg, var(--dot-primary), var(--dot-secondary));
+  }
+  .border-dot {
+    border-color: var(--dot-border);
+  }
+  .bg-surface {
+    background-color: var(--dot-surface);
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dot-bg); }
+::-webkit-scrollbar-thumb { background: var(--dot-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dot-muted); }
+
+/* RainbowKit overrides */
+[data-rk] {
+  --rk-colors-accentColor: var(--dot-primary) !important;
 }

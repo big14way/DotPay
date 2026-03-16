@@ -1,12 +1,12 @@
 import { defineChain } from "viem";
 
-export const passetHub = defineChain({
+export const paseoAssetHub = defineChain({
   id: 420420417,
-  name: "Paseo Asset Hub",
+  name: "Polkadot Hub Testnet",
   nativeCurrency: {
-    name: "PAS",
-    symbol: "PAS",
     decimals: 10,
+    name: "Paseo",
+    symbol: "PAS",
   },
   rpcUrls: {
     default: {
@@ -28,13 +28,9 @@ export const NETWORK_CONSTANTS = {
   EXPLORER: "https://blockscout-testnet.polkadot.io",
   NATIVE_TOKEN: "PAS",
   NATIVE_DECIMALS: 10,
-  FAUCET: "https://faucet.polkadot.io/?parachain=1111",
-
+  FAUCET: "https://faucet.polkadot.io/",
   USDC_ASSET_ID: 1337,
   USDT_ASSET_ID: 1984,
-  USDC_ERC20_ADDR: "0x0000053900000000000000000000000001200000" as `0x${string}`,
-  USDT_ERC20_ADDR: "0x000007C000000000000000000000000001200000" as `0x${string}`,
-
   XCM_PRECOMPILE: "0x00000000000000000000000000000000000a0000" as `0x${string}`,
   HYDRATION_PARA_ID: 2034,
   PENDULUM_PARA_ID: 2094,
