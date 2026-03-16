@@ -35,6 +35,14 @@ body {
   }
 }
 
+/* Mobile bottom safe area for tab bar */
+@media (max-width: 767px) {
+  main { padding-bottom: 5rem !important; }
+}
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--dot-bg); }

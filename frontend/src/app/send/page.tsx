@@ -9,7 +9,8 @@ import { useTokenApproval } from "@/hooks/useTokenApproval";
 import { useUSDCBalance } from "@/hooks/useBalance";
 import { CONTRACTS } from "@/config/contracts";
 import { formatUSDC, parseUSDC } from "@/lib/utils";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, ExternalLink, CheckCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function SendPage() {
   const { isConnected } = useAccount();
@@ -26,7 +27,7 @@ export default function SendPage() {
     CONTRACTS.InvoiceCore,
     parsedAmount
   );
-  const { createEscrow, isPending, isConfirming, isSuccess } =
+  const { createEscrow, isPending, isConfirming, isSuccess, txHash } =
     useCreateEscrow();
 
   const deadlineTimestamp =
@@ -168,21 +169,59 @@ export default function SendPage() {
             </div>
           </div>
 
-          {isSuccess ? (
-            <div className="bg-[var(--dot-success)]/10 border border-[var(--dot-success)]/20 rounded-xl p-4 text-center">
-              <p className="text-[var(--dot-success)] font-medium">
-                Escrow created successfully!
+          {isSuccess && txHash ? (
+            <div className="bg-[var(--dot-success)]/10 border border-[var(--dot-success)]/20 rounded-xl p-5 text-center space-y-3">
+              <CheckCircle className="w-10 h-10 text-[var(--dot-success)] mx-auto" />
+              <p className="text-[var(--dot-success)] font-bold text-lg">
+                Escrow Created Successfully!
               </p>
+              <div className="flex flex-col gap-2">
+                <a
+                  href={`https://blockscout-testnet.polkadot.io/tx/${txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm text-[var(--dot-primary)] hover:underline"
+                >
+                  View Transaction on Explorer <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+                <Link
+                  href="/escrows"
+                  className="text-sm text-white hover:text-[var(--dot-primary)] transition-colors"
+                >
+                  View My Escrows
+                </Link>
+              </div>
+            </div>
+          ) : isConfirming ? (
+            <div className="bg-[var(--dot-primary)]/10 border border-[var(--dot-primary)]/20 rounded-xl p-4 text-center space-y-2">
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-[var(--dot-primary)] border-t-transparent rounded-full animate-spin" />
+                <p className="text-[var(--dot-primary)] font-medium">
+                  Confirming on-chain...
+                </p>
+              </div>
+              {txHash && (
+                <a
+                  href={`https://blockscout-testnet.polkadot.io/tx/${txHash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs text-[var(--dot-muted)] hover:text-[var(--dot-primary)]"
+                >
+                  Track on Explorer <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
             </div>
           ) : (
             <TransactionButton
               onClick={handleSubmit}
-              loading={isPending || isConfirming || isApproving}
+              loading={isPending || isApproving}
               disabled={!seller || !amount || parsedAmount === 0n}
               className="w-full"
             >
               {needsApproval ? (
                 "Approve USDC"
+              ) : isPending ? (
+                "Confirm in Wallet..."
               ) : (
                 <span className="flex items-center gap-2">
                   Create Escrow <ArrowRight className="w-4 h-4" />

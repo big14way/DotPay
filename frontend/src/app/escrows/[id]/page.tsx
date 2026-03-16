@@ -34,7 +34,7 @@ export default function EscrowDetailPage() {
   const { address } = useAccount();
   const { escrow, isLoading, refetch } = useEscrow(id);
   const { yieldAccrued, borrowLimit, debt } = useYield(id);
-  const { release, refund, dispute, isPending, isConfirming } =
+  const { release, refund, dispute, isPending, isConfirming, txHash: actionTxHash } =
     useReleaseEscrow();
 
   if (isLoading || !escrow) {
@@ -229,35 +229,54 @@ export default function EscrowDetailPage() {
             {isActive && (isBuyer || isSeller) && (
               <div className="bg-surface border border-dot rounded-xl p-6">
                 <h2 className="text-lg font-bold text-white mb-4">Actions</h2>
-                <div className="flex flex-wrap gap-3">
-                  {isBuyer && (
-                    <>
-                      <TransactionButton
-                        onClick={() => handleAction("release")}
-                        loading={isPending || isConfirming}
-                        variant="primary"
-                      >
-                        Release Funds
-                      </TransactionButton>
-                      <TransactionButton
-                        onClick={() => handleAction("dispute")}
-                        loading={isPending || isConfirming}
-                        variant="danger"
-                      >
-                        <AlertTriangle className="w-4 h-4" /> Dispute
-                      </TransactionButton>
-                    </>
-                  )}
-                  {isSeller && (
-                    <TransactionButton
-                      onClick={() => handleAction("refund")}
-                      loading={isPending || isConfirming}
-                      variant="secondary"
+                {isConfirming && actionTxHash ? (
+                  <div className="bg-[var(--dot-primary)]/10 border border-[var(--dot-primary)]/20 rounded-xl p-4 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 border-2 border-[var(--dot-primary)] border-t-transparent rounded-full animate-spin" />
+                      <p className="text-[var(--dot-primary)] font-medium text-sm">
+                        Confirming transaction...
+                      </p>
+                    </div>
+                    <a
+                      href={`https://blockscout-testnet.polkadot.io/tx/${actionTxHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs text-[var(--dot-muted)] hover:text-[var(--dot-primary)]"
                     >
-                      Refund Buyer
-                    </TransactionButton>
-                  )}
-                </div>
+                      Track on Explorer <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-3">
+                    {isBuyer && (
+                      <>
+                        <TransactionButton
+                          onClick={() => handleAction("release")}
+                          loading={isPending}
+                          variant="primary"
+                        >
+                          {isPending ? "Confirm in Wallet..." : "Release Funds"}
+                        </TransactionButton>
+                        <TransactionButton
+                          onClick={() => handleAction("dispute")}
+                          loading={isPending}
+                          variant="danger"
+                        >
+                          <AlertTriangle className="w-4 h-4" /> Dispute
+                        </TransactionButton>
+                      </>
+                    )}
+                    {isSeller && (
+                      <TransactionButton
+                        onClick={() => handleAction("refund")}
+                        loading={isPending}
+                        variant="secondary"
+                      >
+                        {isPending ? "Confirm in Wallet..." : "Refund Buyer"}
+                      </TransactionButton>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>

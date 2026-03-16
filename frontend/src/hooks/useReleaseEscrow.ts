@@ -1,19 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
 import { INVOICE_CORE_ABI } from "@/config/abis";
-import toast from "react-hot-toast";
+import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 
 export function useReleaseEscrow() {
   const [txHash, setTxHash] = useState<`0x${string}` | undefined>();
+  const [actionLabel, setActionLabel] = useState("Transaction");
   const { writeContractAsync, isPending } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } =
     useWaitForTransactionReceipt({ hash: txHash });
 
+  useEffect(() => {
+    if (isSuccess && txHash) {
+      txSuccessToast(txHash, actionLabel);
+    }
+  }, [isSuccess, txHash, actionLabel]);
+
   const release = async (escrowId: bigint) => {
     try {
+      setActionLabel("Release");
       const hash = await writeContractAsync({
         address: CONTRACTS.InvoiceCore,
         abi: INVOICE_CORE_ABI,
@@ -21,16 +29,17 @@ export function useReleaseEscrow() {
         args: [escrowId],
       });
       setTxHash(hash);
-      toast.success("Release submitted!");
+      txSubmittedToast(hash, "Release escrow");
       return hash;
     } catch (err: any) {
-      toast.error(err?.shortMessage || "Failed to release escrow");
+      txErrorToast(err);
       throw err;
     }
   };
 
   const refund = async (escrowId: bigint) => {
     try {
+      setActionLabel("Refund");
       const hash = await writeContractAsync({
         address: CONTRACTS.InvoiceCore,
         abi: INVOICE_CORE_ABI,
@@ -38,16 +47,17 @@ export function useReleaseEscrow() {
         args: [escrowId],
       });
       setTxHash(hash);
-      toast.success("Refund submitted!");
+      txSubmittedToast(hash, "Refund escrow");
       return hash;
     } catch (err: any) {
-      toast.error(err?.shortMessage || "Failed to refund escrow");
+      txErrorToast(err);
       throw err;
     }
   };
 
   const dispute = async (escrowId: bigint) => {
     try {
+      setActionLabel("Dispute");
       const hash = await writeContractAsync({
         address: CONTRACTS.InvoiceCore,
         abi: INVOICE_CORE_ABI,
@@ -55,10 +65,10 @@ export function useReleaseEscrow() {
         args: [escrowId],
       });
       setTxHash(hash);
-      toast.success("Dispute submitted!");
+      txSubmittedToast(hash, "Dispute escrow");
       return hash;
     } catch (err: any) {
-      toast.error(err?.shortMessage || "Failed to dispute escrow");
+      txErrorToast(err);
       throw err;
     }
   };

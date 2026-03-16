@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useAccount,
   useReadContract,
@@ -9,6 +9,7 @@ import {
 } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
 import { USDC_ABI } from "@/config/abis";
+import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 
 export function useTokenApproval(spender: `0x${string}`, amount: bigint) {
   const { address } = useAccount();
@@ -24,23 +25,35 @@ export function useTokenApproval(spender: `0x${string}`, amount: bigint) {
 
   const { writeContractAsync, isPending: isApproving } = useWriteContract();
 
-  const { isLoading: isWaiting } = useWaitForTransactionReceipt({
+  const { isLoading: isWaiting, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   });
+
+  useEffect(() => {
+    if (isSuccess && txHash) {
+      txSuccessToast(txHash, "USDC approved");
+      refetchAllowance();
+    }
+  }, [isSuccess, txHash]);
 
   const needsApproval =
     allowance !== undefined && (allowance as bigint) < amount;
 
   const approve = async () => {
-    const hash = await writeContractAsync({
-      address: CONTRACTS.USDC,
-      abi: USDC_ABI,
-      functionName: "approve",
-      args: [spender, amount],
-    });
-    setTxHash(hash);
-    await refetchAllowance();
-    return hash;
+    try {
+      const hash = await writeContractAsync({
+        address: CONTRACTS.USDC,
+        abi: USDC_ABI,
+        functionName: "approve",
+        args: [spender, amount],
+      });
+      setTxHash(hash);
+      txSubmittedToast(hash, "USDC approval");
+      return hash;
+    } catch (err: any) {
+      txErrorToast(err);
+      throw err;
+    }
   };
 
   return {

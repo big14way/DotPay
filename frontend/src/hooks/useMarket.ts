@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   useReadContract,
   useReadContracts,
@@ -9,7 +9,7 @@ import {
 } from "wagmi";
 import { CONTRACTS } from "@/config/contracts";
 import { INVOICE_CORE_ABI } from "@/config/abis";
-import toast from "react-hot-toast";
+import { txSubmittedToast, txSuccessToast, txErrorToast } from "@/lib/toast";
 import type { ListingData } from "@/components/InvoiceCard";
 
 export function useMarket() {
@@ -65,6 +65,12 @@ export function useBuyInvoice() {
   const { isLoading: isConfirming, isSuccess } =
     useWaitForTransactionReceipt({ hash: txHash });
 
+  useEffect(() => {
+    if (isSuccess && txHash) {
+      txSuccessToast(txHash, "Invoice purchased");
+    }
+  }, [isSuccess, txHash]);
+
   const buyInvoice = async (listingId: bigint) => {
     try {
       const hash = await writeContractAsync({
@@ -74,10 +80,10 @@ export function useBuyInvoice() {
         args: [listingId],
       });
       setTxHash(hash);
-      toast.success("Purchase submitted!");
+      txSubmittedToast(hash, "Invoice purchase");
       return hash;
     } catch (err: any) {
-      toast.error(err?.shortMessage || "Failed to buy invoice");
+      txErrorToast(err);
       throw err;
     }
   };
@@ -91,6 +97,12 @@ export function useListInvoice() {
   const { isLoading: isConfirming, isSuccess } =
     useWaitForTransactionReceipt({ hash: txHash });
 
+  useEffect(() => {
+    if (isSuccess && txHash) {
+      txSuccessToast(txHash, "Invoice listed");
+    }
+  }, [isSuccess, txHash]);
+
   const listInvoice = async (escrowId: bigint, listPrice: bigint) => {
     try {
       const hash = await writeContractAsync({
@@ -100,10 +112,10 @@ export function useListInvoice() {
         args: [escrowId, listPrice],
       });
       setTxHash(hash);
-      toast.success("Invoice listed!");
+      txSubmittedToast(hash, "Invoice listing");
       return hash;
     } catch (err: any) {
-      toast.error(err?.shortMessage || "Failed to list invoice");
+      txErrorToast(err);
       throw err;
     }
   };
